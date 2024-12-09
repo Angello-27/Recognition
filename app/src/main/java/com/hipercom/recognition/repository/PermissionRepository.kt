@@ -17,9 +17,7 @@ class PermissionRepository(private val permissionDialogs: PermissionDialogs) {
     fun checkPermissions(context: Context, liveData: MutableLiveData<PermissionState>) {
         Dexter.withContext(context)
             .withPermissions(
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                Manifest.permission.CAMERA
             )
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
