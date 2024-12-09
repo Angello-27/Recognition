@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hipercom.recognition.model.PermissionState
 import com.hipercom.recognition.repository.PermissionRepository
+import com.hipercom.recognition.ui.dialogs.PermissionDialogHelper
 
-class MainViewModel : ViewModel() {
-    private val permissionRepository = PermissionRepository()
+class MainViewModel(private val permissionRepository: PermissionRepository) : ViewModel() {
     val permissionsState = MutableLiveData<PermissionState>()
 
     fun checkPermissions(context: Context) {

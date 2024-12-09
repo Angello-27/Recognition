@@ -1,31 +1,37 @@
 package com.hipercom.recognition.ui.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.hipercom.recognition.model.PermissionState
+import com.hipercom.recognition.repository.PermissionRepository
+import com.hipercom.recognition.ui.components.PermissionScreen
+import com.hipercom.recognition.ui.dialogs.PermissionDialogHelper
+import com.hipercom.recognition.util.openAppSettings
 import com.hipercom.recognition.viewmodel.MainViewModel
+import com.hipercom.recognition.viewmodel.MainViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MainViewModel
+    // Crear la instancia de PermissionDialogHelper y el repositorio
+    private val permissionDialogs = PermissionDialogHelper()
+    private val permissionRepository = PermissionRepository(permissionDialogs)
+
+    // Usar viewModels con la fábrica para crear el ViewModel con las dependencias correctas
+    private val viewModel: MainViewModel by viewModels {
+        MainViewModelFactory(permissionRepository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
         setContent {
-            PermissionScreen(viewModel)
+            PermissionScreen(
+                viewModel = viewModel,
+                onPermissionDenied = { openAppSettings(this) }
+            )
         }
 
         viewModel.permissionsState.observe(this) { state ->
@@ -33,30 +39,13 @@ class MainActivity : AppCompatActivity() {
                 PermissionState.GRANTED -> {
                     // Continuar con la inicialización
                 }
-
-                else -> {
-                    // Mostrar mensaje de permiso denegado
-                    Toast.makeText(
-                        this,
-                        "You need to grant all permissions to use the app",
-                        Toast.LENGTH_LONG
-                    ).show()
+                PermissionState.DENIED -> {
+                    Toast.makeText(this, "You need to grant all permissions to use the app", Toast.LENGTH_LONG).show()
                 }
             }
         }
 
         viewModel.checkPermissions(this)
     }
-}
 
-@Composable
-fun PermissionScreen(viewModel: MainViewModel) {
-    val context = LocalContext.current
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Text("Checking permissions...")
-        // Puedes expandir este Composable para manejar diferentes estados de UI basados en el estado del permiso
-    }
 }

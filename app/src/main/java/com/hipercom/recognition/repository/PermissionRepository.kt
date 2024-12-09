@@ -2,15 +2,18 @@ package com.hipercom.recognition.repository
 
 import android.Manifest
 import android.content.Context
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MutableLiveData
+import com.hipercom.recognition.R
 import com.hipercom.recognition.model.PermissionState
+import com.hipercom.recognition.util.PermissionDialogs
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
-class PermissionRepository {
+class PermissionRepository(private val permissionDialogs: PermissionDialogs) {
     fun checkPermissions(context: Context, liveData: MutableLiveData<PermissionState>) {
         Dexter.withContext(context)
             .withPermissions(
@@ -31,7 +34,8 @@ class PermissionRepository {
                     permissions: List<PermissionRequest>,
                     token: PermissionToken
                 ) {
-                    token.continuePermissionRequest()
+                    // Muestra un diálogo explicativo aquí
+                    permissionDialogs.showRationaleDialog(context, token)
                 }
             }).check()
     }
