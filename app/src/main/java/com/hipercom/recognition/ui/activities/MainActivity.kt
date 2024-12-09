@@ -5,10 +5,10 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import com.hipercom.recognition.R
 import com.hipercom.recognition.model.PermissionState
 import com.hipercom.recognition.repository.PermissionRepository
@@ -21,7 +21,7 @@ import com.hipercom.recognition.viewmodel.CameraViewModel
 import com.hipercom.recognition.viewmodel.MainViewModel
 import com.hipercom.recognition.viewmodel.MainViewModelFactory
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     // Crear la instancia de PermissionDialogHelper y el repositorio
     private val permissionDialogs = PermissionDialogHelper()
@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            RecognitionTheme() {
+            RecognitionTheme {
                 PermissionScreen(
                     viewModel = viewModel,
                     onPermissionDenied = { openAppSettings(this) }
