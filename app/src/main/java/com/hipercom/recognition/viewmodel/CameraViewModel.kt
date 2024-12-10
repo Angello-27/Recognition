@@ -2,21 +2,17 @@ package com.hipercom.recognition.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import com.hipercom.recognition.repository.OpenCVRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.opencv.core.Mat
 
-class CameraViewModel : ViewModel() {
-    private val _cameraAction = Channel<CameraAction>()
-    val cameraAction = _cameraAction.receiveAsFlow()
+class CameraViewModel(private val openCVRepository: OpenCVRepository) : ViewModel() {
 
-    fun onCameraButtonClick() {
-        viewModelScope.launch {
-            _cameraAction.send(CameraAction.Capture)
+    fun processCameraFrame(inputFrame: Mat) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val processedFrame = openCVRepository.processImage(inputFrame)
+            // Aquí podrías enviar el frame procesado a la UI o hacer otro procesamiento
         }
-    }
-
-    sealed class CameraAction {
-        object Capture : CameraAction()
     }
 }
